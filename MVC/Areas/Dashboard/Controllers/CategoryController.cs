@@ -1,6 +1,7 @@
 ﻿using BLL.Services.Abstracts;
 using BLL.Services.Concretes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MODEL.Entities;
 
 namespace MVC.Areas.Dashboard.Controllers
@@ -28,11 +29,11 @@ namespace MVC.Areas.Dashboard.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category)
         {
             try
             { 
-                _categoryService.CreateAsync(category);
+                await _categoryService.CreateAsync(category);
                 TempData["Success"] = "Kategori oluşturuldu.";
             }
             catch (Exception ex) 
@@ -56,6 +57,10 @@ namespace MVC.Areas.Dashboard.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(Category category) 
         {
+            if (!ModelState.IsValid)
+            {
+                return View(category);
+            }
             try
             {
                 await _categoryService.UpdateAsync(category);
@@ -67,5 +72,7 @@ namespace MVC.Areas.Dashboard.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
     }
 }
